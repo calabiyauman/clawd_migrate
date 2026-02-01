@@ -15,6 +15,7 @@ from pathlib import Path
 
 from . import create_backup, discover_source_assets, run_migration
 from . import __version__
+from .openclaw_setup import install_openclaw_and_onboard
 
 
 def cmd_discover(root: Path) -> int:
@@ -29,10 +30,11 @@ def cmd_backup(root: Path, backup_dir: Path) -> int:
     return 0
 
 
-def cmd_migrate(root: Path, no_backup: bool, output: Path) -> int:
+def cmd_migrate(root: Path, no_backup: bool, output: Path, setup_openclaw: bool) -> int:
     if no_backup:
         print("Warning: --no-backup set; no backup will be created.", file=sys.stderr)
-    result = run_migration(root=root, backup_first=not no_backup, output_root=output or root)
+    out_root = output or root
+    result = run_migration(root=root, backup_first=not no_backup, output_root=out_root)
     if result["backup_path"]:
         print(f"Backup: {result['backup_path']}")
     print(f"Memory copied: {len(result['memory_copied'])} files")
@@ -43,6 +45,19 @@ def cmd_migrate(root: Path, no_backup: bool, output: Path) -> int:
         for e in result["errors"]:
             print(f"  {e}", file=sys.stderr)
         return 1
+    if setup_openclaw:
+        print("Installing openclaw (npm i -g openclaw)...", file=sys.stderr)
+        setup_result = install_openclaw_and_onboard(out_root)
+        if not setup_result["install_ok"]:
+            print(f"Install failed: {setup_result['install_message']}", file=sys.stderr)
+        elif not setup_result["onboard_ok"]:
+            print(f"Onboard failed: {setup_result['onboard_message']}", file=sys.stderr)
+        else:
+            print("openclaw installed and onboard completed.", file=sys.stderr)
+        if setup_result["errors"]:
+            for e in setup_result["errors"]:
+                print(f"  {e}", file=sys.stderr)
+            return 1
     return 0
 
 
@@ -78,11 +93,17 @@ def main() -> int:
     p_migrate.add_argument("--root", type=Path, default=None, help="Source root (default: cwd)")
     p_migrate.add_argument("--no-backup", action="store_true", help="Skip backup (not recommended)")
     p_migrate.add_argument("--output", type=Path, default=None, help="Openclaw output root (default: root)")
+    p_migrate.add_argument(
+        "--setup-openclaw",
+        action="store_true",
+        help="After migration: npm i -g openclaw and run openclaw onboard in output dir",
+    )
     p_migrate.set_defaults(
         func=lambda a: cmd_migrate(
             Path(a.root or os.getcwd()),
             a.no_backup,
             Path(a.output) if a.output else None,
+            a.setup_openclaw,
         )
     )
 

@@ -14,6 +14,7 @@ const pyFiles = [
   "migrate.py",
   "backup.py",
   "tui.py",
+  "openclaw_setup.py",
 ];
 
 if (!fs.existsSync(libDir)) {

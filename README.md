@@ -6,7 +6,7 @@ Migrate from **moltbot** or **clawdbot** to **openclaw**. Preserves config, memo
 
 ## Quick start
 
-**Requirements:** Node.js 14+ and Python 3.x.
+**Requirements:** Node.js 14+ and Python 3.x. Works on **Windows**, **macOS**, and **Linux**.
 
 ```bash
 npx clawd-migrate
@@ -20,9 +20,10 @@ That starts the **interactive menu** (lobster + guided steps). For full install 
 
 - **Discovers** your existing bot assets (memory files, config, clawdbook/Moltbook).
 - **Backs up** everything into a timestamped folder before any changes.
-- **Migrates** into the openclaw layout: `memory/`, `.config/openclaw/`, `.config/clawdbook/`, and preserves `projects/`.
+- **Migrates** your files into the openclaw layout: `memory/`, `.config/openclaw/`, `.config/clawdbook/`, and preserves `projects/`.
+- **Optionally** installs openclaw (`npm i -g openclaw`) and runs `openclaw onboard` in the migrated directory so openclaw is set up with your existing files in place.
 
-Supports both **moltbot** and **clawdbot** source layouts; no machine-specific paths.
+Migration does **not** download openclaw by itself; use the post-migration step (TUI prompt or `--setup-openclaw`) to install openclaw and onboard the directory. Supports both **moltbot** and **clawdbot** source layouts; no machine-specific paths.
 
 ---
 
@@ -44,10 +45,10 @@ Full details, CLI options, and Python-only usage: **[HOW_TO_RUN.md](HOW_TO_RUN.m
 clawd-migrate                    # Interactive menu (default)
 clawd-migrate discover [--root PATH]
 clawd-migrate backup [--root PATH] [--backup-dir PATH]
-clawd-migrate migrate [--root PATH] [--no-backup] [--output PATH]
+clawd-migrate migrate [--root PATH] [--no-backup] [--output PATH] [--setup-openclaw]
 ```
 
-`--root` defaults to the current directory.
+`--root` defaults to the current directory. Use `--setup-openclaw` to run `npm i -g openclaw` and `openclaw onboard` in the output directory after migration.
 
 ---
 

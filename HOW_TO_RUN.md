@@ -9,11 +9,12 @@ This guide covers every way to run **clawd-migrate**: via npm (recommended), wit
 - **Node.js** 14 or newer (for the npm command)
 - **Python** 3.x (the migration tool runs on Python)
 
-Make sure both are installed and on your PATH:
+Works on **Windows**, **macOS** (Terminal or iTerm2), and **Linux**. Make sure both are installed and on your PATH:
 
 ```bash
 node --version   # v14+
-python --version # 3.x (or python3 on macOS/Linux)
+python --version # 3.x (Windows)
+python3 --version # 3.x (macOS/Linux)
 ```
 
 ---
@@ -129,15 +130,18 @@ clawd-migrate backup [--root PATH] [--backup-dir PATH]
 
 ### Migrate
 
-Migrate to openclaw layout (optionally create a backup first):
+Migrate your files into the openclaw layout (optionally create a backup first). Migration **does not** install openclaw; it only copies your assets into `memory/`, `.config/openclaw/`, `.config/clawdbook/`, and `projects/`. After migration you can install openclaw and run `openclaw onboard` in that directory so openclaw is set up with your files in place.
 
 ```bash
-clawd-migrate migrate [--root PATH] [--no-backup] [--output PATH]
+clawd-migrate migrate [--root PATH] [--no-backup] [--output PATH] [--setup-openclaw]
 ```
 
 - `--root` – Source directory (default: current directory).  
 - `--no-backup` – Skip backup (not recommended).  
-- `--output` – Where to write openclaw layout (default: same as `--root`).
+- `--output` – Where to write openclaw layout (default: same as `--root`).  
+- `--setup-openclaw` – After migration, run `npm i -g openclaw` and `openclaw onboard` in the output directory.
+
+In the **interactive menu**, after a successful migration you’ll be prompted: “Install openclaw and run openclaw onboard in this directory? [Y/n]”. If you say yes, the tool runs `npm i -g openclaw` and then `openclaw onboard` in the migrated directory so your existing files and openclaw’s new structure are combined.
 
 ---
 
@@ -166,6 +170,14 @@ npx clawd-migrate migrate --root ~/my-bot
 ```bash
 npx clawd-migrate migrate --root ~/my-bot --output ~/openclaw-bot
 ```
+
+**Migrate and then install openclaw and run onboard in the same directory:**
+
+```bash
+npx clawd-migrate migrate --root ~/my-bot --setup-openclaw
+```
+
+That runs migration, then `npm i -g openclaw` and `openclaw onboard` in the migrated directory so openclaw is set up with your files in place.
 
 ---
 

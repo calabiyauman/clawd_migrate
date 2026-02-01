@@ -10,8 +10,9 @@ import sys
 from pathlib import Path
 
 from . import create_backup, discover_source_assets, run_migration
+from .openclaw_setup import install_openclaw_and_onboard
 
-# ANSI codes (work in Windows Terminal, PowerShell 7+, and Unix)
+# ANSI codes (Windows Terminal, PowerShell 7+, macOS Terminal, Linux)
 RESET = "\033[0m"
 BOLD = "\033[1m"
 DIM = "\033[2m"
@@ -102,7 +103,7 @@ def do_backup(root: Path) -> None:
 
 
 def do_migrate(root: Path, no_backup: bool) -> None:
-    """Run migration (optionally with backup first)."""
+    """Run migration (optionally with backup first), then optionally install openclaw and run onboard."""
     if not no_backup:
         print(style("  Migration will create a backup first.", DIM))
     else:
@@ -113,6 +114,7 @@ def do_migrate(root: Path, no_backup: bool) -> None:
         return
     print(style("\n  Migrating...\n", CYAN))
     result = run_migration(root=root, backup_first=not no_backup, output_root=None)
+    out_root = root
     if result["backup_path"]:
         print(style(f"  Backup: {result['backup_path']}", GREEN))
     print(style(f"  Memory copied: {len(result['memory_copied'])} files", GREEN))
@@ -124,6 +126,26 @@ def do_migrate(root: Path, no_backup: bool) -> None:
             print(style(f"    {e}", RED))
     else:
         print(style("\n  Migration complete.", BOLD, GREEN))
+        print(style("  Your files are in the openclaw layout (memory/, .config/openclaw/, .config/clawdbook/).", DIM))
+        setup_confirm = input(
+            style("  Install openclaw and run openclaw onboard in this directory? [Y/n]: ", YELLOW)
+        ).strip().lower()
+        if setup_confirm != "n" and setup_confirm != "no":
+            print(style("\n  Installing openclaw (npm i -g openclaw)...\n", CYAN))
+            setup_result = install_openclaw_and_onboard(out_root)
+            if setup_result["install_ok"]:
+                print(style(f"  {setup_result['install_message']}", GREEN))
+            else:
+                print(style(f"  Install: {setup_result['install_message']}", RED))
+            if setup_result["onboard_ok"]:
+                print(style(f"  {setup_result['onboard_message']}", GREEN))
+            else:
+                print(style(f"  Onboard: {setup_result['onboard_message']}", RED))
+            if setup_result["errors"]:
+                for e in setup_result["errors"]:
+                    print(style(f"    {e}", RED))
+            elif setup_result["install_ok"] and setup_result["onboard_ok"]:
+                print(style("\n  Openclaw is installed and this directory is onboarded.", BOLD, GREEN))
     print()
 
 
