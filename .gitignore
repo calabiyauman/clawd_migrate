@@ -1,0 +1,21 @@
+# NPM prepublish output (Python package copy)
+lib/
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+*.so
+.venv/
+venv/
+env/
+
+# Node (if you add dev deps later)
+node_modules/
+
+# Misc
+.DS_Store
+*.log
+.npmignore
