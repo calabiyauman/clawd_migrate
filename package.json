@@ -1,6 +1,6 @@
 {
   "name": "clawd-migrate",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Migrate from moltbot or clawdbot to openclaw. Preserves config, memory, and clawdbook (Moltbook) data.",
   "author": "",
   "license": "MIT",
