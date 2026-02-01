@@ -26,8 +26,8 @@ def style(s: str, *codes: str) -> str:
     return "".join(codes) + s + RESET
 
 
-# ASCII lobster (side view, body in RED, eyes in BOLD, "CLAWD MIGRATE" in CYAN)
-LOBSTER_LINES = """
+# ASCII lobster (side view); raw string so backslashes display correctly
+LOBSTER_LINES = r"""
                              ,.---._
                    ,,,,     /       `,
                     \\\\   /    '\_  ;
@@ -47,21 +47,11 @@ LOBSTER_LINES = """
 def print_banner() -> None:
     """Print the lobster ASCII art and welcome message."""
     print()
-    for line in LOBSTER_LINES:
+    for line in LOBSTER_LINES.splitlines():
         if not line.strip():
-            print(line)
+            print()
             continue
-        # Split lobster (left) from "CLAWD MIGRATE" text (right)
-        sep = " ____"
-        if sep in line and ("/   \\" in line or "|" in line):
-            left, right = line.split(sep, 1)
-            print(style(left, RED) + style(sep + right, CYAN))
-        elif "o o" in line:
-            left, right = line.split("o o", 1)
-            print(style(left, RED) + style("o", BOLD) + " " + style("o", BOLD) + style(right, RED))
-        else:
-            # Lobster-only line
-            print(style(line, RED))
+        print(style(line, RED))
     print(style("  Migrate from moltbot or clawdbot to openclaw safely  ", BOLD, CYAN))
     print(style("  Discover -> Backup -> Migrate  ", DIM))
     print()

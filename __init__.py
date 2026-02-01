@@ -3,7 +3,7 @@ clawd_migrate - Migrate from moltbot or clawdbot to openclaw while preserving
 configuration, memory, and clawdbook (Moltbook) data. Works for any user's system.
 """
 
-__version__ = "0.1.1"
+__version__ = "0.1.2"
 
 from .backup import create_backup
 from .discover import discover_source_assets, discover_clawdbot_assets
